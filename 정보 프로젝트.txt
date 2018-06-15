@@ -1,0 +1,67 @@
+import csv
+h = open('행정구역별 지하철역.csv')
+gg = csv.reader(h)
+gg = list(gg)
+
+f = open('읍면동연령별.csv')
+data = csv.reader(f)
+next(data)
+data = list(data)
+x=[]
+rat=[]
+for row in gg :
+    name=row[0]
+    x.append(name)
+    for roww in data :
+        if name in roww[0] :
+            old=0
+            for j in range(68,len(roww)) :
+                old=old+int(roww[j])
+            rat.append(old/int(roww[2]))
+            break
+            
+g=open('2018년 05월  유무임별 승차비율.csv')
+dataa = csv.reader(g)
+next(dataa)
+dataa=list(dataa)
+
+rat1=[]
+a=[]
+dd=[]
+for i in gg : 
+    count=0
+    for j in i :
+        if  j!=''and j not in x:
+            name=j
+            dd.append(name)        
+            for row in dataa :
+                    if name in row[3] :
+                        y=int(row[6])/(int(row[4])+int(row[6]))
+                        a.append(y)
+    rat1.append(sum(a)/len(dd))
+
+ratio=[]
+for i in range(0,len(rat)) :
+    ratio.append([rat[i],rat1[i],x[i]])
+
+rat.sort()
+rat2=[]
+xxx=[]
+for j in range(0,len(rat)) :
+    for i in ratio :
+        if i[0] == rat[j] :
+            rat2.append(i[1])
+            xxx.append(i[2])
+
+
+import matplotlib.pyplot as plt
+% matplotlib inline
+plt.figure(figsize = (17,15),dpi = 80)
+plt.rc('font',family = 'Malgun Gothic') 
+# plt.rc('font',family = 'Apple Gothic')
+plt.plot(rat, label = '고령화 비율')
+plt.plot(rat2, label = '무임승차 비율')
+plt.title('서울의 구별 고령화 비율과 무임승차 비율의 관계')
+plt.xticks(range(0,len(xxx)),xxx)
+plt.legend(loc=4)
+plt.show()
